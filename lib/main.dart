@@ -15,7 +15,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Academy App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.teal,
+          primary: Colors.teal,
+          secondary: Colors.teal[300],
+        ),
+        scaffoldBackgroundColor: Colors.grey[100],
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Colors.black87),
+        ),
       ),
       home: const MyHomePage(title: 'Bem-vindo'),
     );
@@ -98,7 +106,8 @@ class PaginaFutura extends StatelessWidget {
   Widget build(BuildContext context) {
 return Scaffold(
   appBar: CustomAppBar(
-    title: "Página Inicial",
+    nome: "Nome do Usuário",
+    matricula: "Matrícula 123456",
     showLogout: true,
     onLogout: () {
       Navigator.pushAndRemoveUntil(
