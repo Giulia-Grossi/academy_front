@@ -1,4 +1,7 @@
+import 'package:academy_front/pages/login_page.dart';
+import 'package:academy_front/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,15 +10,14 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Academy App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Bem-vindo'),
     );
   }
 }
@@ -30,38 +32,82 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  bool temInternet = true;
 
-  void _incrementCounter() {
+  // Função para verificar internet
+  Future<void> verificarInternet() async {
+    var resultado = await Connectivity().checkConnectivity();
+
     setState(() {
-      _counter++;
+      temInternet = resultado != ConnectivityResult.none;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    verificarInternet(); // Verifica assim que a tela abre
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+          children: [
+            temInternet
+                ? const Text(
+                    'Internet disponível!',
+                    style: TextStyle(color: Colors.green, fontSize: 18),
+                  )
+                : const Text(
+                    'Sem conexão à internet',
+                    style: TextStyle(color: Colors.red, fontSize: 18),
+                  ),
+            const SizedBox(height: 20),
+
+            // Botão que leva para outra página
+            ElevatedButton(
+              onPressed: () {
+                // Navegar para a próxima página futuramente
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginPage(),
+                  ),
+                );
+              },
+              child: const Text('Ir para próxima página'),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
     );
+  }
+}
+
+// Página futura em branco (temporária)
+class PaginaFutura extends StatelessWidget {
+  const PaginaFutura({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+return Scaffold(
+  appBar: CustomAppBar(
+    title: "Página Inicial",
+    showLogout: true,
+    onLogout: () {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => LoginPage()),
+        (route) => false,
+      );
+    },
+  )
+);
   }
 }
