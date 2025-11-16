@@ -1,4 +1,7 @@
+import 'package:academy_front/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'disciplinas_page.dart';
+import 'calendario_page.dart';
 
 class HomePage extends StatelessWidget {
   final String nome;
@@ -19,66 +22,14 @@ class HomePage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _header(),
+              CustomAppBar(nome: nome, matricula: matricula),
               _banner(),
-              _activitiesSection(),
+              _activitiesSection(context),
               _scheduleSection(),
               _infoSection(),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  // =====================================================
-  // HEADER
-  // =====================================================
-  Widget _header() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      decoration: const BoxDecoration(
-        color: Colors.teal,
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
-      ),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            radius: 25,
-            //backgroundImage: AssetImage("assets/images/profile.jpg"),
-          ),
-          const SizedBox(width: 12),
-
-          // Nome + matrícula
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  nome,
-                  style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
-                Text(
-                  matricula,
-                  style: const TextStyle(fontSize: 14, color: Colors.white70),
-                ),
-              ],
-            ),
-          ),
-
-          // Icons
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications_none, color: Colors.white),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.settings, color: Colors.white),
-          ),
-        ],
       ),
     );
   }
@@ -104,13 +55,43 @@ class HomePage extends StatelessWidget {
   // =====================================================
   // ATIVIDADES (KHS, KRS, E-learning etc…)
   // =====================================================
-  Widget _activitiesSection() {
+  Widget _activitiesSection(BuildContext context) {
     final List<Map<String, dynamic>> items = [
-      {"icon": Icons.event_note, "label": "Jadwal"},
-      {"icon": Icons.check_circle, "label": "Presensi"},
-      {"icon": Icons.folder_copy, "label": "KHS"},
-      {"icon": Icons.library_books, "label": "KRS"},
-      {"icon": Icons.computer, "label": "E-learning"},
+      {
+        "icon": Icons.event_note,
+        "label": "Calendário",
+        "onPressed": () {
+          Navigator.push(// Navegação para a página de disciplinas
+            context,
+            MaterialPageRoute(builder: (context) => CalendarioPage ())
+            );
+        },
+      },
+      {
+        "icon": Icons.check_circle,
+        "label": "Presensa",
+        "onPressed": () {},
+      },
+      {
+        "icon": Icons.star,
+        "label": "Notas",
+        "onPressed": () {},
+      },
+      {
+        "icon": Icons.book,
+        "label": "Disciplinas",
+        "onPressed": () {
+          Navigator.push(// Navegação para a página de disciplinas
+            context,
+            MaterialPageRoute(builder: (context) => DisciplinasPage()),
+          );
+        },
+      },
+      {
+        "icon": Icons.computer,
+        "label": "Histórico",
+        "onPressed": () {},
+      },
     ];
 
     return Column(
@@ -121,10 +102,9 @@ class HomePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text("Atividades",
+            children: [
+              const Text("Atividades",
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-              Text("Ver tudo", style: TextStyle(color: Colors.teal)),
             ],
           ),
         ),
@@ -142,10 +122,12 @@ class HomePage extends StatelessWidget {
             itemBuilder: (_, i) {
               return Column(
                 children: [
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor: Colors.teal.withOpacity(.15),
-                    child: Icon(items[i]["icon"], color: Colors.teal, size: 30),
+                  IconButton.filled(
+                    //radius: 28,
+                    color: Colors.teal.withValues(alpha: 0.5),
+                    hoverColor: Colors.teal.withValues(alpha: 0.9),
+                    icon: Icon(items[i]["icon"], color: Colors.grey[100], size: 30),
+                    onPressed: items[i]["onPressed"],
                   ),
                   const SizedBox(height: 6),
                   Text(items[i]["label"], style: const TextStyle(fontSize: 13)),
@@ -179,14 +161,14 @@ class HomePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 )
-              ],
-            ),
-            child: Row(
-              children: [
+                ],
+              ),
+              child: Row(
+                children: [
                 // Horários
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,36 +216,58 @@ class HomePage extends StatelessWidget {
   // INFORMAÇÕES IMPORTANTES
   // =====================================================
   Widget _infoSection() {
+    final List<Map<String, String>> news = [
+      {
+        "title": "Alunos UTY criam startup de sucesso!",
+        "body": "Mesmo em pandemia muitos alunos desenvolveram soluções de impacto..."
+      },
+      // Adicione mais itens aqui conforme necessário
+    ];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text("Informações para você",
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
-          Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-            elevation: 3,
-            shadowColor: Colors.black12,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: const [
-                  Text(
-                    "Alunos UTY criam startup de sucesso!",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+
+          // Lista de cards (shrinkWrap + NeverScrollable para permitir o scroll da página pai)
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: news.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            itemBuilder: (_, i) {
+              return Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18)),
+                elevation: 3,
+                shadowColor: Colors.black12,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        news[i]["title"]!,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        news[i]["body"]!,
+                        style:
+                            const TextStyle(fontSize: 13, color: Colors.grey),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Mesmo em pandemia muitos alunos desenvolveram soluções de impacto...",
-                    style: TextStyle(fontSize: 13, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
+
           const SizedBox(height: 100),
         ],
       ),
@@ -280,7 +284,7 @@ class HomePage extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, -3)),
         ],
