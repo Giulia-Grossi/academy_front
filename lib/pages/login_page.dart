@@ -1,4 +1,5 @@
 //lib\pages\login_page.dart
+import 'package:academy_front/pages/cadastro_page.dart';
 import 'package:academy_front/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'home_page.dart';
@@ -102,6 +103,34 @@ class _LoginPageState extends State<LoginPage> {
                         : const Text("Entrar",
                             style: TextStyle(color: Colors.white)),
                   ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Recuperação de senha ainda não implementada'),
+                          ),
+                        );
+                      },
+                      child: const Text('Esqueci a senha',
+                          style: TextStyle(color: Colors.teal)),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const CadastroPage()),
+                        );
+                      },
+                      child: const Text('Criar conta',
+                          style: TextStyle(color: Colors.teal)),
+                    ),
+                  ],
                 ),
               ],
             ),
