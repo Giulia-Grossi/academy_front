@@ -1,6 +1,7 @@
+//lib\pages\login_page.dart
+import 'package:academy_front/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'home_page.dart';
-import 'cadastro_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,15 +13,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController userController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final AuthService authService = AuthService();
 
   bool isLoading = false;
-
-  @override
-  void dispose() {
-    userController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
 
   Future<void> _login() async {
     final user = userController.text.trim();
@@ -33,19 +28,23 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    setState(() => isLoading = true);
+    final success = await AuthService.login(user, pass);
 
-    // TODO: substituir futuramente por AuthService.login
-    await Future.delayed(const Duration(milliseconds: 700));
+    if (!success) {
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Credenciais inválidas")),
+      );
+      return;
+    }
 
     setState(() => isLoading = false);
 
-    // Mock → futuramente retornará nome real do aluno
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (_) => HomePage(
-          nome: 'Aluno Exemplo',
+          nome: "Aluno",
           matricula: user,
         ),
       ),
@@ -64,53 +63,30 @@ class _LoginPageState extends State<LoginPage> {
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.school, size: 96, color: Colors.teal),
-
-                const SizedBox(height: 12),
+                const SizedBox(height: 20),
                 const Text(
-                  'SISTEMA INFORMACIONAL ACADÊMICO',
+                  "SISTEMA INFORMACIONAL ACADÊMICO",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.teal,
-                    fontWeight: FontWeight.bold,
-                  ),
+                      color: Colors.teal,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
                 ),
-
                 const SizedBox(height: 30),
-
-                // Campo de usuário (RA / Matrícula / etc)
                 TextField(
                   controller: userController,
-                  decoration: InputDecoration(
-                    hintText: "RA / Matrícula / CPF / Email",
-                    prefixIcon: const Icon(Icons.person),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+                  decoration:
+                      _input("RA / Matrícula / CPF / Email", Icons.person),
                 ),
-
-                const SizedBox(height: 12),
-
-                // Senha
+                const SizedBox(height: 15),
                 TextField(
                   controller: passwordController,
                   obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Senha',
-                    prefixIcon: const Icon(Icons.lock),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+                  decoration: _input("Senha", Icons.lock),
                 ),
-
                 const SizedBox(height: 20),
-
-                // Botão entrar
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -119,61 +95,27 @@ class _LoginPageState extends State<LoginPage> {
                       backgroundColor: Colors.teal,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                          borderRadius: BorderRadius.circular(12)),
                     ),
                     child: isLoading
-                        ? const SizedBox(
-                            height: 18,
-                            width: 18,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Text(
-                            'Entrar',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text("Entrar",
+                            style: TextStyle(color: Colors.white)),
                   ),
-                ),
-
-                const SizedBox(height: 8),
-
-                // Links
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                'Recuperação de senha ainda não implementada'),
-                          ),
-                        );
-                      },
-                      child: const Text('Esqueci a senha',
-                          style: TextStyle(color: Colors.teal)),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const CadastroPage()),
-                        );
-                      },
-                      child: const Text('Criar conta',
-                          style: TextStyle(color: Colors.teal)),
-                    ),
-                  ],
                 ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  InputDecoration _input(String hint, IconData icon) {
+    return InputDecoration(
+      hintText: hint,
+      prefixIcon: Icon(icon),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
     );
   }
 }
