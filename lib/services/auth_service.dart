@@ -40,4 +40,37 @@ class AuthService {
       return false;
     }
   }
+  static Future<bool> register({
+  required String ra,
+  required String login,
+  required String password,
+}) async {
+  final url = Uri.parse("$baseUrl/auth/register-simple");
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "ra": ra,
+        "login": login,
+        "password": password,
+        "role": "STUDENT",
+      }),
+    );
+
+    print("REGISTER STATUS: ${response.statusCode}");
+    print("REGISTER BODY: ${response.body}");
+
+    return response.statusCode == 200;
+
+  } catch (e) {
+    print("REGISTER EXCEPTION: $e");
+    return false;
+  }
 }
+
+}
+

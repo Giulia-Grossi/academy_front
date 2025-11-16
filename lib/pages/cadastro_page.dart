@@ -1,3 +1,4 @@
+import 'package:academy_front/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class CadastroPage extends StatefulWidget {
@@ -32,31 +33,41 @@ class _CadastroPageState extends State<CadastroPage> {
     senhaCtrl.clear();
   }
 
-  Future<void> _cadastrarAluno() async {
-    if (nomeCtrl.text.trim().isEmpty ||
-        emailCtrl.text.trim().isEmpty ||
-        senhaCtrl.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Preencha todos os campos obrigatórios')),
-      );
-      return;
-    }
+Future<void> _cadastrarAluno() async {
+  final nome = nomeCtrl.text.trim();
+  final email = emailCtrl.text.trim();
+  final senha = senhaCtrl.text;
 
-    setState(() => isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 700)); // mock
-    setState(() => isLoading = false);
-
-    // 🔧 MOCK (futuro: conectar à API /auth/register)
-    debugPrint(
-      'CADASTRO ALUNO: nome=${nomeCtrl.text}, email=${emailCtrl.text}, cpf=${cpfCtrl.text}',
-    );
-
+  if (nome.isEmpty || email.isEmpty || senha.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Cadastro realizado! (mock)')),
+      const SnackBar(content: Text('Preencha todos os campos obrigatórios')),
     );
-
-    Navigator.pop(context); // volta ao login
+    return;
   }
+
+  setState(() => isLoading = true);
+
+  final success = await AuthService.register(
+    ra: DateTime.now().millisecondsSinceEpoch.toString(), // gerar RA temporário
+    login: email,
+    password: senha,
+  );
+
+  setState(() => isLoading = false);
+
+  if (!success) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Falha ao cadastrar usuário')),
+    );
+    return;
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Cadastro concluído! Faça login.')),
+  );
+
+  Navigator.pop(context);
+}
 
   @override
   Widget build(BuildContext context) {
