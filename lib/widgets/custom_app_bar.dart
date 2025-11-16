@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../pages/perfil.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String nome;
@@ -47,11 +48,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             if (!showBack)
               const SizedBox(width: 8), // keep spacing consistent
 
-            const CircleAvatar(
+            IconButton(
+              onPressed: () {Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PerfilPage())
+              );},
+              icon: const CircleAvatar(
               radius: 20,
-              // backgroundImage: AssetImage("assets/images/profile.jpg"),
               backgroundColor: Colors.white24,
               child: Icon(Icons.person, color: Colors.white),
+              ),
             ),
             const SizedBox(width: 12),
 
@@ -79,13 +85,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
 
             IconButton(
-              onPressed: onNotifications,
               icon: const Icon(Icons.notifications_none, color: Colors.white),
+              onPressed:(){
+                showDialog(
+                context: context,
+                builder: (context) => const NotificacoesDialog(), 
+                );
+              }
             ),
             IconButton(
-              onPressed: onSettings,
               icon: const Icon(Icons.settings, color: Colors.white),
-            ),
+              onPressed: onSettings,
+            )
           ],
         ),
       ),
@@ -95,3 +106,46 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(height);
 }
+
+class NotificacoesDialog extends StatelessWidget {
+  const NotificacoesDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        width: 600,
+        height: 400,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Notificações',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView(
+                children: const [
+                  ListTile(
+                    title: Text("Você recebeu uma nova atividade."),
+                    subtitle: Text("Hoje às 14:20"),
+                  ),
+                  ListTile(
+                    title: Text("Nota atualizada em Matemática."),
+                    subtitle: Text("Ontem"),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

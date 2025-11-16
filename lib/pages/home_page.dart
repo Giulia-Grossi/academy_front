@@ -1,6 +1,7 @@
 import 'package:academy_front/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'disciplinas_page.dart';
+import 'calendario_page.dart';
 
 class HomePage extends StatelessWidget {
   final String nome;
@@ -34,11 +35,6 @@ class HomePage extends StatelessWidget {
   }
 
   // =====================================================
-  // HEADER
-  // =====================================================
-  
-
-  // =====================================================
   // BANNER
   // =====================================================
   Widget _banner() {
@@ -64,7 +60,12 @@ class HomePage extends StatelessWidget {
       {
         "icon": Icons.event_note,
         "label": "Calendário",
-        "onPressed": () {},
+        "onPressed": () {
+          Navigator.push(// Navegação para a página de disciplinas
+            context,
+            MaterialPageRoute(builder: (context) => CalendarioPage ())
+            );
+        },
       },
       {
         "icon": Icons.check_circle,
@@ -104,10 +105,6 @@ class HomePage extends StatelessWidget {
             children: [
               const Text("Atividades",
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-              TextButton(
-                onPressed: () {}, //TODO: implementar caminho para página "ver tudo"
-                child: const Text("Ver tudo", style: TextStyle(color: Colors.teal)),
-              ),
             ],
           ),
         ),
@@ -128,6 +125,7 @@ class HomePage extends StatelessWidget {
                   IconButton.filled(
                     //radius: 28,
                     color: Colors.teal.withValues(alpha: 0.5),
+                    hoverColor: Colors.teal.withValues(alpha: 0.9),
                     icon: Icon(items[i]["icon"], color: Colors.grey[100], size: 30),
                     onPressed: items[i]["onPressed"],
                   ),

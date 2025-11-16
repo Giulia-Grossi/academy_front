@@ -24,16 +24,24 @@ class DisciplinasPage extends StatelessWidget {
   }
 
   Widget _buildDisciplinaTile(String nome, String professor, String local, BuildContext context) {
-    return ListTile(
-      title: Text(nome),
-      subtitle: Text('Professor: $professor\n Local: $local'),
-      onTap: () {
-        // Navegação para a página específica da disciplina
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => DisciplinaDetalhesPage(nome: nome)),
-        );
-      },
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      child: Container(
+        child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          title: Text(nome),
+          subtitle: Text('Professor: $professor\nLocal: $local'),
+          trailing: IconButton(
+            icon: Icon(Icons.arrow_forward),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DisciplinaDetalhesPage(nome: nome)),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }
@@ -46,12 +54,35 @@ class DisciplinaDetalhesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(nome),
-      ),
-      body: Center(
-        child: Text('Detalhes da disciplina: $nome'),
+      body: Column(
+        children: [
+          CustomAppBar(nome: "Nome do Aluno", matricula: "Matrícula 123456",),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(16),
+              child: ListView(
+                children: [
+                  Card(
+                    margin: EdgeInsets.all(20),
+                    child:Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        nome.toUpperCase(),
+                        style: TextStyle(fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Text('Aqui estão os detalhes da disciplina $nome. \n\nConteúdo programático, avaliações, materiais e outras informações relevantes podem ser exibidas aqui.'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
