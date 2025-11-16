@@ -2,6 +2,9 @@ import 'package:academy_front/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'disciplinas_page.dart';
 import 'calendario_page.dart';
+import 'presenca_page.dart';
+import 'notas_page.dart';
+import 'historico_page.dart';
 
 class HomePage extends StatelessWidget {
   final String nome;
@@ -69,13 +72,23 @@ class HomePage extends StatelessWidget {
       },
       {
         "icon": Icons.check_circle,
-        "label": "Presensa",
-        "onPressed": () {},
+        "label": "Presença",
+        "onPressed": () {
+          Navigator.push(// Navegação para a página de disciplinas
+            context,
+            MaterialPageRoute(builder: (context) => PresencaPage()),
+          );
+        },
       },
       {
         "icon": Icons.star,
         "label": "Notas",
-        "onPressed": () {},
+        "onPressed": () {
+          Navigator.push(// Navegação para a página de disciplinas
+            context,
+            MaterialPageRoute(builder: (context) => NotasPage()),
+          );
+        },
       },
       {
         "icon": Icons.book,
@@ -90,7 +103,12 @@ class HomePage extends StatelessWidget {
       {
         "icon": Icons.computer,
         "label": "Histórico",
-        "onPressed": () {},
+        "onPressed": () {
+          Navigator.push(// Navegação para a página de disciplinas
+            context,
+            MaterialPageRoute(builder: (context) => HistoricoPage()),
+          );
+        },
       },
     ];
 

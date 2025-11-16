@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../pages/perfil.dart';
+import 'package:academy_front/pages/perfil.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String nome;
