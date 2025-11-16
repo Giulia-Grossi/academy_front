@@ -95,7 +95,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             IconButton(
               icon: const Icon(Icons.settings, color: Colors.white),
-              onPressed: onSettings,
+              onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsPage()),
+              );
+            },
+
             )
           ],
         ),
@@ -149,3 +155,209 @@ class NotificacoesDialog extends StatelessWidget {
   }
 }
 
+
+class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Sobre")),
+      body: const Padding(
+        padding: EdgeInsets.all(20),
+        child: Text(
+          "Academy — plataforma acadêmica\nVersão: 1.0 (Protótipo)\n\n"
+          "Desenvolvido para o projeto da disciplina.\n"
+          "Dados são auto-inseridos pelo usuário.",
+        ),
+      ),
+    );
+  }
+}
+
+
+class HelpPage extends StatelessWidget {
+  const HelpPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Ajuda e Suporte")),
+      body: const Center(
+        child: Text("Suporte do Academy ainda indisponível."),
+      ),
+    );
+  }
+}
+
+class PrivacyPage extends StatelessWidget {
+  const PrivacyPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Privacidade e Segurança")),
+      body: const Center(
+        child: Text("Privacidade ainda não implementada."),
+      ),
+    );
+  }
+}
+
+
+class AppearancePage extends StatelessWidget {
+  const AppearancePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Aparência")),
+      body: const Center(child: Text("Opções de tema, cores, etc.")),
+    );
+  }
+}
+
+
+class AccountPage extends StatelessWidget {
+  const AccountPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Conta"),
+      ),
+      body: const Center(
+        child: Text("Configurações de conta (Protótipo)"),
+      ),
+    );
+  }
+}
+
+
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: const Text("Configurações"),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        foregroundColor: Colors.black,
+      ),
+
+      body: ListView(
+        children: [
+          _searchField(),
+
+          const SizedBox(height: 10),
+
+          _settingsTile(
+            icon: Icons.person_outline,
+            text: "Conta",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AccountPage()),
+              );
+            },
+          ),
+
+          _settingsTile(
+            icon: Icons.notifications_none,
+            text: "Notificações",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsPage()),
+              );
+            },
+          ),
+
+          _settingsTile(
+            icon: Icons.remove_red_eye_outlined,
+            text: "Aparência",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AppearancePage()),
+              );
+            },
+          ),
+
+          _settingsTile(
+            icon: Icons.lock_outline,
+            text: "Privacidade e Segurança",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PrivacyPage()),
+              );
+            },
+          ),
+
+          _settingsTile(
+            icon: Icons.help_outline,
+            text: "Ajuda e Suporte",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const HelpPage()),
+              );
+            },
+          ),
+
+          _settingsTile(
+            icon: Icons.info_outline,
+            text: "Sobre",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AboutPage()),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Barra de busca
+  Widget _searchField() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: "Procurar uma configuração...",
+          prefixIcon: const Icon(Icons.search),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Item da lista
+  Widget _settingsTile({required IconData icon, required String text, required VoidCallback onTap}) {
+    return Column(
+      children: [
+        ListTile(
+          leading: Icon(icon, size: 26, color: Colors.black87),
+          title: Text(text, style: const TextStyle(fontSize: 16)),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+          onTap: onTap,
+          tileColor: Colors.white,
+        ),
+        const Divider(height: 1),
+      ],
+    );
+  }
+}

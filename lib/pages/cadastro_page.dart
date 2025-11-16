@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-enum CadastroSubPage { select, aluno, professor }
-
 class CadastroPage extends StatefulWidget {
   const CadastroPage({super.key});
 
@@ -10,9 +8,7 @@ class CadastroPage extends StatefulWidget {
 }
 
 class _CadastroPageState extends State<CadastroPage> {
-  CadastroSubPage page = CadastroSubPage.select;
-
-  // controllers (reutilizados para as duas formas)
+  // Controllers
   final TextEditingController nomeCtrl = TextEditingController();
   final TextEditingController emailCtrl = TextEditingController();
   final TextEditingController cpfCtrl = TextEditingController();
@@ -29,8 +25,6 @@ class _CadastroPageState extends State<CadastroPage> {
     super.dispose();
   }
 
-  void _go(CadastroSubPage p) => setState(() => page = p);
-
   void _limparCampos() {
     nomeCtrl.clear();
     emailCtrl.clear();
@@ -39,9 +33,12 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   Future<void> _cadastrarAluno() async {
-    if (nomeCtrl.text.trim().isEmpty || senhaCtrl.text.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Preencha nome e senha')));
+    if (nomeCtrl.text.trim().isEmpty ||
+        emailCtrl.text.trim().isEmpty ||
+        senhaCtrl.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha todos os campos obrigatórios')),
+      );
       return;
     }
 
@@ -49,51 +46,22 @@ class _CadastroPageState extends State<CadastroPage> {
     await Future.delayed(const Duration(milliseconds: 700)); // mock
     setState(() => isLoading = false);
 
-    // TODO: enviar dados para API; aqui só printamos
+    // 🔧 MOCK (futuro: conectar à API /auth/register)
     debugPrint(
-        'CADASTRO ALUNO: nome=${nomeCtrl.text}, email=${emailCtrl.text}, cpf=${cpfCtrl.text}');
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cadastro de aluno realizado (mock)')));
-    Navigator.pop(context); // volta para login
-  }
-
-  Future<void> _cadastrarProfessor() async {
-    if (nomeCtrl.text.trim().isEmpty || senhaCtrl.text.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Preencha nome e senha')));
-      return;
-    }
-
-    setState(() => isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 700)); // mock
-    setState(() => isLoading = false);
-
-    debugPrint(
-        'CADASTRO PROFESSOR: nome=${nomeCtrl.text}, email=${emailCtrl.text}, cpf=${cpfCtrl.text}');
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Cadastro de professor realizado (mock)')));
-    Navigator.pop(context); // volta para login
-  }
-
-  Widget _backButton() {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.teal),
-        onPressed: () {
-          if (page == CadastroSubPage.select) {
-            Navigator.pop(context);
-          } else {
-            _go(CadastroSubPage.select);
-          }
-        },
-      ),
+      'CADASTRO ALUNO: nome=${nomeCtrl.text}, email=${emailCtrl.text}, cpf=${cpfCtrl.text}',
     );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Cadastro realizado! (mock)')),
+    );
+
+    Navigator.pop(context); // volta ao login
   }
 
   @override
   Widget build(BuildContext context) {
-    final maxWidth = 600.0;
+    const maxWidth = 600.0;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -104,148 +72,72 @@ class _CadastroPageState extends State<CadastroPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
+
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(18),
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 240),
-              child: _buildBody(),
-            ),
+            constraints: const BoxConstraints(maxWidth: maxWidth),
+            child: _cadastroAlunoView(),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBody() {
-    switch (page) {
-      case CadastroSubPage.select:
-        return _selectView();
-      case CadastroSubPage.aluno:
-        return _alunoView();
-      case CadastroSubPage.professor:
-        return _professorView();
-    }
-  }
-
-  Widget _selectView() {
+  // ============================================
+  // TELA ÚNICA — Cadastro de Aluno
+  // ============================================
+  Widget _cadastroAlunoView() {
     return Column(
-      key: const ValueKey('select'),
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 8),
-        const Text('Selecione o tipo de cadastro',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const Text(
+          'Cadastro de Aluno',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+
+        const SizedBox(height: 20),
+
+        TextField(
+          controller: nomeCtrl,
+          decoration: const InputDecoration(labelText: 'Nome completo'),
+        ),
+
+        const SizedBox(height: 12),
+
+        TextField(
+          controller: emailCtrl,
+          keyboardType: TextInputType.emailAddress,
+          decoration: const InputDecoration(labelText: 'Email'),
+        ),
+
+        const SizedBox(height: 12),
+
+        TextField(
+          controller: cpfCtrl,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(labelText: 'CPF (opcional)'),
+        ),
+
+        const SizedBox(height: 12),
+
+        TextField(
+          controller: senhaCtrl,
+          obscureText: true,
+          decoration: const InputDecoration(labelText: 'Senha'),
+        ),
+
         const SizedBox(height: 24),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-              minimumSize: const Size.fromHeight(50)),
-          onPressed: () {
-            _limparCampos();
-            _go(CadastroSubPage.aluno);
-          },
-          child: const Text('Sou Aluno'),
-        ),
-        const SizedBox(height: 12),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-              minimumSize: const Size.fromHeight(50)),
-          onPressed: () {
-            _limparCampos();
-            _go(CadastroSubPage.professor);
-          },
-          child: const Text('Sou Professor'),
-        ),
-        const SizedBox(height: 18),
-        TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Voltar')),
-      ],
-    );
-  }
 
-  Widget _alunoView() {
-    return Column(
-      key: const ValueKey('aluno'),
-      children: [
-        _backButton(),
-        const SizedBox(height: 6),
-        const Text('Cadastro de Aluno',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 12),
-        TextField(
-            controller: nomeCtrl,
-            decoration: const InputDecoration(labelText: 'Nome completo')),
-        const SizedBox(height: 8),
-        TextField(
-            controller: emailCtrl,
-            decoration: const InputDecoration(labelText: 'Email')),
-        const SizedBox(height: 8),
-        TextField(
-            controller: cpfCtrl,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'CPF')),
-        const SizedBox(height: 8),
-        TextField(
-            controller: senhaCtrl,
-            obscureText: true,
-            decoration: const InputDecoration(labelText: 'Senha')),
-        const SizedBox(height: 16),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
             onPressed: isLoading ? null : _cadastrarAluno,
             style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: const EdgeInsets.symmetric(vertical: 14)),
-            child: isLoading
-                ? const CircularProgressIndicator(color: Colors.white)
-                : const Text('Cadastrar'),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _professorView() {
-    return Column(
-      key: const ValueKey('prof'),
-      children: [
-        _backButton(),
-        const SizedBox(height: 6),
-        const Text('Cadastro de Professor',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 12),
-        TextField(
-            controller: nomeCtrl,
-            decoration: const InputDecoration(labelText: 'Nome completo')),
-        const SizedBox(height: 8),
-        TextField(
-            controller: emailCtrl,
-            keyboardType: TextInputType.emailAddress,
-            decoration:
-                const InputDecoration(labelText: 'Email institucional')),
-        const SizedBox(height: 8),
-        TextField(
-            controller: cpfCtrl,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'CPF')),
-        const SizedBox(height: 8),
-        TextField(
-            controller: senhaCtrl,
-            obscureText: true,
-            decoration: const InputDecoration(labelText: 'Senha')),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: isLoading ? null : _cadastrarProfessor,
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: const EdgeInsets.symmetric(vertical: 14)),
+              backgroundColor: Colors.teal,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
             child: isLoading
                 ? const CircularProgressIndicator(color: Colors.white)
                 : const Text('Cadastrar'),
